@@ -1,33 +1,44 @@
-<!-- resources/views/tasks/index.blade.php -->
 @extends('layouts.app')
-
 @section('content')
-    <div class="container mt-4">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header">
-                        <h1 class="mb-0">Lista de Tareas</h1>
-                    </div>
-                    <div class="card-body">
-                        <div class="text-right mb-3">
-                            <a href="/tasks/create" class="btn btn-success">Crear Tarea</a>
-                        </div>
-                        <ul class="list-group">
-                            @foreach ($tasks as $task)
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <a href="/tasks/{{ $task->id }}">{{ $task->name }}</a> 
-                                    <form action="/tasks/{{ $task->id }}/complete" method="POST" style="display:inline;">
-                                        @csrf
-                                        @method('PATCH')
-                                        <button type="submit" class="btn btn-sm btn-primary">Completar</button>
-                                    </form>
-                                </li>
-                            @endforeach
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+<h2 class="display-6 text-center mb-4">Tareas</h2>
+
+<a href="/tasks/create" class="btn btn-outline-primary">Nueva Tarea</a>
+<div class="table-responsive">
+    <table class="table text-left">
+        <thead>
+            <tr>
+                <th style="width: 5%">ID</th>
+                <th style="width: 22%;">Nombre</th>
+                <th style="width: 22%;">Prioridad</th>
+                <th style="width: 22%;">Completada</th>
+                <th style="width: 22%;">Usuario</th>
+                <th style="width: 22%;">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($tasks as $task)
+            <tr>
+                <th scope="row" class="text-start">{{ $task->id }}</th>
+                <th scope="row" class="text-start">
+                    <a href="/tasks/{{ $task->id}}">{{ $task->name }}</a>
+                </th>
+                <td>
+                    <span class="badge text-bg-warning">{{ $task->priority?->name }}</span>
+                </td>
+                <td>
+                    <svg class="bi" width="24" height="24">
+                        <use xlink:href="#check" />
+                    </svg>
+                </td>
+                <td>
+                    {{ $task->user ? $task->user->name : 'Sin usuario asignado' }}
+                </td>
+                <td>
+                    <a href="#" class="btn btn-primary">Completar</a>
+                </td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
+</div>
 @endsection
