@@ -8,12 +8,12 @@ use Illuminate\Http\Request;
 class TaskController extends Controller
 {
   
-    public function index()
-    {
-        $tasks = Task::with('user')->get();
-        return view('tasks.index', compact('tasks'));
-    }
-    
+  public function index()
+{
+    $tasks = Task::with('user')->get();
+    return view('tasks.index', compact('tasks'));
+}
+
     
 
     public function create()
@@ -29,17 +29,20 @@ class TaskController extends Controller
     }
 
     public function store()
-    {
-        $data = request()->validate([
-            'name' => ['required', 'min:3', 'max:255'],
-            'description' => ['required', 'min:3']
-        ]);
+{
+    $data = request()->validate([
+        'name' => ['required', 'min:3', 'max:255'],
+        'description' => ['required', 'min:3'],
+        'priority' => ['required', 'in:baja,media,alta'],
+        'completed' => ['boolean'],
+    ]);
 
-        Task::create($data);
+    Task::create($data);
 
-        return redirect('/tasks');
-    }
+    return redirect('/tasks');
+}
 
+    
     public function edit(Task $task)
     {
         return view('tasks.edit', [
@@ -51,14 +54,17 @@ class TaskController extends Controller
     {
         $data = request()->validate([
             'name' => ['required', 'min:3', 'max:255'],
-            'description' => ['required', 'min:3']
+            'description' => ['required', 'min:3'],
+            'priority' => ['required', 'in:baja,media,alta'],
+            'completed' => ['boolean'],
         ]);
-
+    
         $task->fill($data)->save();
-
+    
         return redirect('/tasks/' . $task->id);
     }
-
+    
+    
     public function destroy(Task $task)
     {
         $task->delete();

@@ -19,3 +19,7 @@ Route::put('/tasks/{task}', [TaskController::class, 'update']);
 
 Route::resource('tasks', TaskController::class);
 Route::patch('/tasks/{task}/complete', [TaskController::class, 'complete'])->name('tasks.complete');
+Route::resource('tasks', TaskController::class);
+
+
+Route::patch('/tasks/{task}/complete', [TaskController::class, 'complete'])->name('tasks.complete');
