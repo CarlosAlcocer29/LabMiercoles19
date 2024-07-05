@@ -9,7 +9,7 @@ class Task extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
+    protected $fillable = ['name', 'description', 'priority', 'completed'];
 
     /**
      * Get the user that owns the task.
@@ -18,5 +18,8 @@ class Task extends Model
     {
         return $this->belongsTo(User::class);
     }
-    
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class, 'task_tag');
+    }
 }
