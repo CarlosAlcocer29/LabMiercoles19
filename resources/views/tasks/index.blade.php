@@ -31,12 +31,16 @@
                         @endforeach
                     </td>
                     <td>
-                        <a href="{{ route('tasks.edit', $task->id) }}" class="btn btn-warning">Editar</a>
-                        <form action="{{ route('tasks.destroy', $task->id) }}" method="POST" style="display:inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger">Eliminar</button>
-                        </form>
+                        @can('update', $task)
+                            <a href="{{ route('tasks.edit', $task->id) }}" class="btn btn-warning">Editar</a>
+                        @endcan
+                        @can('delete', $task)
+                            <form action="{{ route('tasks.destroy', $task->id) }}" method="POST" style="display:inline;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger">Eliminar</button>
+                            </form>
+                        @endcan
                     </td>
                 </tr>
             @endforeach
