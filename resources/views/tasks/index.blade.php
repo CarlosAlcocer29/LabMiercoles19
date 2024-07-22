@@ -3,53 +3,45 @@
 @section('content')
     <h2 class="display-6 text-center mb-4">Lista de Tareas</h2>
 
-    <a href="{{ route('tasks.create') }}" class="btn btn-outline-primary mb-3">Nueva Tarea</a>
-    <div class="table-responsive">
-        <table class="table text-left">
-            <thead>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Prioridad</th>
+                <th>Completada</th>
+                <th>Usuario</th>
+                <th>Etiquetas</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($tasks as $task)
                 <tr>
-                    <th style="width: 5%">ID</th>
-                    <th style="width: 22%;">Nombre</th>
-                    <th style="width: 22%;">Prioridad</th>
-                    <th style="width: 22%;">Completada</th>
-                    <th style="width: 22%;">Usuario</th>
-                    <th style="width: 22%;">Etiquetas</th>
-                    <th style="width: 22%;">Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($tasks as $task)
-                <tr>
-                    <td class="text-start">{{ $task->id }}</td>
-                    <td class="text-start">
-                        <a href="{{ route('tasks.show', $task->id) }}">{{ $task->name }}</a>
-                    </td>
+                    <td>{{ $task->id }}</td>
+                    <td>{{ $task->name }}</td>
+                    <td>{{ $task->description }}</td>
+                    <td>{{ $task->priority }}</td>
+                    <td>{{ $task->completed ? 'Sí' : 'No' }}</td>
+                    <td>{{ $task->user->name }}</td>
                     <td>
-                        <span class="badge bg-warning text-dark">{{ ucfirst($task->priority) }}</span>
-                    </td>
-                    <td>
-                        {{ $task->completed ? 'Sí' : 'No' }}
-                    </td>
-                    <td>
-                        {{ $task->user ? $task->user->name : 'Sin usuario asignado' }}
-                    </td>
-                    <td>
-                        @foreach($task->tags as $tag)
-                            <span class="badge bg-primary">{{ $tag->name }}</span>
+                        @foreach ($task->tags as $tag)
+                            {{ $tag->name }}@if (!$loop->last), @endif
                         @endforeach
                     </td>
                     <td>
-                        @if(!$task->completed)
-                            <form action="{{ route('tasks.complete', $task->id) }}" method="POST" style="display: inline;">
-                                @csrf
-                                @method('PATCH')
-                                <button type="submit" class="btn btn-primary">Completar</button>
-                            </form>
-                        @endif
+                        <a href="{{ route('tasks.edit', $task->id) }}" class="btn btn-warning">Editar</a>
+                        <form action="{{ route('tasks.destroy', $task->id) }}" method="POST" style="display:inline;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger">Eliminar</button>
+                        </form>
                     </td>
                 </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </div>
+            @endforeach
+        </tbody>
+    </table>
+
+    <a href="{{ route('tasks.create') }}" class="btn btn-primary">Crear Tarea</a>
 @endsection

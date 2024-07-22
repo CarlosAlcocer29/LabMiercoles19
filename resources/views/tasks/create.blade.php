@@ -35,16 +35,6 @@
                 @endforeach
             </select>
         </div>
-        <div class="mb-3">
-            <label for="user" class="form-label">Usuario</label>
-            <select name="user_id" id="user_id">
-    @foreach($users as $user)
-        <option value="{{ $user->id }}">{{ $user->name }}</option>
-    @endforeach
-</select>
-
-            </select>
-        </div>
         <button type="submit" class="btn btn-primary">Crear</button>
     </form>
 @endsection

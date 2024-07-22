@@ -5,6 +5,8 @@ use App\Models\User; // Importa el modelo User
 use App\Models\Tag; // Importa el modelo Tag
 use App\Models\Task; // Importa el modelo Task
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
 
 class TaskController extends Controller
 {
@@ -37,29 +39,28 @@ class TaskController extends Controller
 
    
     public function store(Request $request)
-    {
-        // Validación de datos
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'priority' => 'required|string|max:50',
-            'user_id' => 'nullable|exists:users,id', // Validar que el user_id exista en la tabla users
-            // Agrega más validaciones según tus necesidades
-        ]);
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'priority' => 'required|string|max:50',
+        'tags' => 'array', // Validar etiquetas si es necesario
+    ]);
 
-        // Crear una nueva instancia de Task y asignar valores
-        $task = new Task();
-        $task->name = $request->input('name');
-        $task->priority = $request->input('priority');
-        $task->completed = false; // Asumiendo que el valor por defecto es falso
-        $task->user_id = $request->input('user_id'); // Asignar el usuario
+    $task = new Task();
+    $task->name = $request->input('name');
+    $task->description = $request->input('description');
+    $task->priority = $request->input('priority');
+    $task->completed = $request->has('completed');
+    $task->user_id = Auth::id(); // Asignar el usuario logueado
 
-        // Guardar la tarea en la base de datos
-        $task->save();
+    $task->save();
 
-        // Redireccionar a la vista deseada o retornar una respuesta según tu lógica
-        return redirect()->route('tasks.index')->with('success', 'Tarea creada exitosamente');
-    }
-    
+    // Sincronizar etiquetas
+    $task->tags()->sync($request->input('tags', []));
+
+    return redirect()->route('tasks.index')->with('success', 'Tarea creada exitosamente');
+}
+
 public function edit($id)
 {
     $task = Task::findOrFail($id);
@@ -76,6 +77,8 @@ public function update(Request $request, $id)
     $task->description = $request->input('description');
     $task->priority = $request->input('priority');
     $task->completed = $request->has('completed');
+    // No modificar user_id ya que es el usuario logueado que creó la tarea
+
     $task->save();
 
     // Sincronizar etiquetas
